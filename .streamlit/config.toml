@@ -1,6 +1,10 @@
 [client]
 # showErrorDetails = "none"
+toolbarMode = "minimal"
 
 [theme]
 # primaryColor = "#F63366"
 # backgroundColor = "black"
+
+[browser]
+gatherUsageStats = false
