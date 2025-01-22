@@ -1,7 +1,10 @@
 ### Utility to integrate with LLMs
 import os
+from typing import List
+from openai import OpenAI
 
-def chat_openai(messages: list[str], model: str = "gpt-4o-mini") -> str:
+
+def chat_openai(messages: List[str], model: str = "gpt-4o-mini") -> str:
     """
     Chat with OpenAI
     
@@ -12,13 +15,12 @@ def chat_openai(messages: list[str], model: str = "gpt-4o-mini") -> str:
     Returns:
         str: Response from OpenAI
     """
-    import openai
-
-    # authenticate
-    openai.api_key = os.getenv("OPENAI_API_KEY")
+    client = OpenAI(
+        api_key=os.getenv("OPENAI_API_KEY")
+    )
     
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": msg} for msg in messages],
             temperature=0.2,  # 0 is deterministic, 1 is random
@@ -29,7 +31,7 @@ def chat_openai(messages: list[str], model: str = "gpt-4o-mini") -> str:
         return f"Error communicating with OpenAI: {str(e)}"
 
 
-def chat_gemini(messages: list[str], model: str = "gemini-1.5-flash-latest") -> str:
+def chat_gemini(messages: List[str], model: str = "gemini-1.5-flash-latest") -> str:
     """
     Chat with Gemini with search enabled
     """
