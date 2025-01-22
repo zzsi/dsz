@@ -3,6 +3,7 @@ import streamlit as st
 from typing import List, Dict, Optional
 from dataclasses import dataclass
 from datetime import datetime
+from llm import chat_openai
 
 PASSCODE = os.getenv("PASSCODE")
 
@@ -131,20 +132,34 @@ def render_page_3():
             f"{'and other data types' if len(st.session_state.user_context.data_handling) > 2 else ''}.")
     
     # Key compliance areas identified
+
+    # Hardcoded example:
+    # st.write("Based on your profile, here are key compliance areas to consider:")
+    # st.markdown("""
+    # 1. **Data Protection & Privacy**
+    #    - Relevant frameworks and requirements
+    #    - Data localization needs
+    
+    # 2. **Industry-Specific Regulations**
+    #    - Licensing requirements
+    #    - Operational standards
+    
+    # 3. **Business Registration**
+    #    - Legal entity requirements
+    #    - Local representation needs
+    # """)
+
+    messages = [
+        f"Given a {st.session_state.user_context.business_type} business in {st.session_state.user_context.industry} "
+        f"entering {st.session_state.user_context.target_market} and handling {', '.join(st.session_state.user_context.data_handling)}, "
+        "what are the key compliance areas to consider? Format the response with markdown bullet points under 3 main categories: "
+        "Data Protection & Privacy, Industry-Specific Regulations, and Business Registration",
+        "Use markdown format for the response",
+    ]
+    
+    compliance_areas = chat_openai(messages)
     st.write("Based on your profile, here are key compliance areas to consider:")
-    st.markdown("""
-    1. **Data Protection & Privacy**
-       - Relevant frameworks and requirements
-       - Data localization needs
-    
-    2. **Industry-Specific Regulations**
-       - Licensing requirements
-       - Operational standards
-    
-    3. **Business Registration**
-       - Legal entity requirements
-       - Local representation needs
-    """)
+    st.markdown(compliance_areas)
     
     # Free text for specific concerns
     specific_concerns = st.text_area(
