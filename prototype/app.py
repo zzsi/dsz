@@ -201,8 +201,10 @@ def render_page_4():
         f"Given a {st.session_state.user_context.business_type} business in {st.session_state.user_context.industry} "
         f"entering {st.session_state.user_context.target_market} and handling {', '.join(st.session_state.user_context.data_handling)}, "
         "provide a detailed compliance roadmap with specific actions and timelines. Format the response in markdown with "
-        "two main sections: Immediate Actions (0-30 days) and Short-term Requirements (30-90 days). "
-        f"Additional context: {st.session_state.user_context.specific_concerns}"
+        "two main sections: Immediate Actions (0-30 days) and Short-term Requirements (30-90 days). ",
+        f"For additional context, the user has the following specific concerns: {st.session_state.user_context.specific_concerns}. "
+        "In your response, try to explain how these concerns might affect the compliance roadmap.",
+        "Use markdown format for the response",
     ]
     
     roadmap = chat_openai(messages)
