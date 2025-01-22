@@ -180,21 +180,57 @@ def render_page_3():
             st.rerun()
 
 def render_page_4():
-    """Final Report and Next Steps"""
+    """Final Report and Next Steps
+
+    An example of a compliance roadmap:
+        st.success("Based on our analysis, here's your customized compliance roadmap")
+        
+        # Placeholder for LLM-generated content
+        st.markdown("### Immediate Actions (0-30 days)")
+        st.markdown("1. Register with relevant authorities")
+        st.markdown("2. Begin data protection impact assessment")
+        
+        st.markdown("### Short-term Requirements (30-90 days)")
+        st.markdown("1. Establish local entity structure")
+        st.markdown("2. Implement data handling procedures")
+    
+    """
     st.header("Your Customized Compliance Roadmap")
-    # This would integrate with your LLM to generate detailed guidance
-    # For now, we'll show a placeholder structured response
+    
+    messages = [
+        f"Given a {st.session_state.user_context.business_type} business in {st.session_state.user_context.industry} "
+        f"entering {st.session_state.user_context.target_market} and handling {', '.join(st.session_state.user_context.data_handling)}, "
+        "provide a detailed compliance roadmap with specific actions and timelines. Format the response in markdown with "
+        "two main sections: Immediate Actions (0-30 days) and Short-term Requirements (30-90 days). "
+        f"Additional context: {st.session_state.user_context.specific_concerns}"
+    ]
+    
+    roadmap = chat_openai(messages)
     
     st.success("Based on our analysis, here's your customized compliance roadmap")
+    st.markdown(roadmap)
     
-    # Placeholder for LLM-generated content
-    st.markdown("### Immediate Actions (0-30 days)")
-    st.markdown("1. Register with relevant authorities")
-    st.markdown("2. Begin data protection impact assessment")
+    # Add download button for the report
+    report_content = f"""
+# Market Entry Compliance Roadmap
+Generated on: {datetime.now().strftime('%Y-%m-%d')}
+
+## Business Profile
+- Target Market: {st.session_state.user_context.target_market}
+- Industry: {st.session_state.user_context.industry}
+- Business Type: {st.session_state.user_context.business_type}
+- Data Types: {', '.join(st.session_state.user_context.data_handling)}
+
+## Compliance Roadmap
+{roadmap}
+    """
     
-    st.markdown("### Short-term Requirements (30-90 days)")
-    st.markdown("1. Establish local entity structure")
-    st.markdown("2. Implement data handling procedures")
+    st.download_button(
+        label="Download Report",
+        data=report_content,
+        file_name="compliance_roadmap.md",
+        mime="text/markdown"
+    )
     
     if st.button("← Start Over"):
         st.session_state.user_context = UserContext()
