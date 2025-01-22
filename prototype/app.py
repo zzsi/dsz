@@ -1,7 +1,10 @@
+import os
 import streamlit as st
 from typing import List, Dict, Optional
 from dataclasses import dataclass
 from datetime import datetime
+
+PASSCODE = os.getenv("PASSCODE")
 
 @dataclass
 class UserContext:
@@ -15,6 +18,8 @@ class UserContext:
 # Initialize session state
 if 'user_context' not in st.session_state:
     st.session_state.user_context = UserContext()
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
 
 # Data for type-ahead
 MARKETS = [
@@ -38,6 +43,17 @@ DATA_TYPES = [
     "Employee Data", "Business Partner Data", "Technical Data",
     "Location Data", "Behavioral Data", "Children's Data"
 ]
+
+def show_login():
+    """Display login screen"""
+    st.title("Market Entry Compliance Navigator")
+    passcode = st.text_input("Enter passcode", type="password")
+    if st.button("Login"):
+        if passcode == PASSCODE:
+            st.session_state.authenticated = True
+            st.rerun()
+        else:
+            st.error("Invalid passcode. Please try again.")
 
 def render_page_1():
     """Initial Questions - Market and Industry"""
@@ -173,13 +189,18 @@ def render_page_4():
 def main():
     st.set_page_config(page_title="Market Entry Compliance Navigator", layout="wide")
     
-    hide_streamlit_style = """
-    <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    </style>
-    """
-    st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+    # hide_streamlit_style = """
+    # <style>
+    # #MainMenu {visibility: hidden;}
+    # footer {visibility: hidden;}
+    # </style>
+    # """
+    # st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+    # Check authentication
+    if not st.session_state.authenticated:
+        show_login()
+        return
 
     # Progress indicator
     progress = (st.session_state.user_context.current_page - 1) * 25
