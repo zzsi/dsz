@@ -173,6 +173,14 @@ def render_page_4():
 def main():
     st.set_page_config(page_title="Market Entry Compliance Navigator", layout="wide")
     
+    hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    </style>
+    """
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
     # Progress indicator
     progress = (st.session_state.user_context.current_page - 1) * 25
     st.progress(progress)
